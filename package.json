@@ -1,0 +1,34 @@
+{
+  "name": "yelp-camp",
+  "version": "1.0.0",
+  "description": "Yelp Camp project from Colt's the Web Developmnt Bootcamp course",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leila-io/Yelp-Camp.git"
+  },
+  "keywords": [
+    "yelp-camp",
+    "node.js",
+    "express",
+    "database",
+    "mongodb",
+    "api",
+    "javascript",
+    "ejs"
+  ],
+  "author": "Leila Ahmadi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leila-io/Yelp-Camp/issues"
+  },
+  "homepage": "https://github.com/leila-io/Yelp-Camp#readme",
+  "dependencies": {
+    "ejs": "^3.0.2",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  }
+}
