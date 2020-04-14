@@ -17,6 +17,18 @@ var campgroundsArr = [
    {
       name: "Mountain Goat's Rest",
       image: "http://source.unsplash.com/800x400/?mountain"
+   },
+   {
+      name: "Himalayas",
+      image: "http://source.unsplash.com/800x400/?himalaya"
+   },
+   {
+      name: "Washington, D.C.",
+      image: "http://source.unsplash.com/800x400/?washington"
+   },
+   {
+      name: "New York City",
+      image: "http://source.unsplash.com/800x400/?new+york"
    }
 ];
 
