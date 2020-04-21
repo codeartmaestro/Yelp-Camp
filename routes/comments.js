@@ -50,7 +50,7 @@ router.post("/", isLoggedIn, function (req, res) {
 // EDIT COMMENT
 // /campgrounds/:id/comments/:comment_id/edit --- nested routing.
 // If we have both :id above, params takes the first one only
-router.get("/:comment_id/edit", checkCampgraoundOwnership, function (req, res) {
+router.get("/:comment_id/edit", checkCommentOwnership, function (req, res) {
    Comment.findById(req.params.comment_id, function (err, foundComment) {
       if (err) {
          res.redirect("back");
@@ -70,7 +70,7 @@ I didn't do this because this way we cannot use any other parameter of campgroun
 */
 
 // UPDATE COMMENT
-router.put("/:comment_id", checkCampgraoundOwnership, function (req, res) {
+router.put("/:comment_id", checkCommentOwnership, function (req, res) {
    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function (err, updatedComment) {
       if (err) {
          res.redirect("back");
@@ -81,7 +81,7 @@ router.put("/:comment_id", checkCampgraoundOwnership, function (req, res) {
 });
 
 // DELETE COMMENT
-router.delete("/:comment_id", checkCampgraoundOwnership, function (req, res) {
+router.delete("/:comment_id", checkCommentOwnership, function (req, res) {
    Comment.findByIdAndRemove(req.params.comment_id, function (err) {
       if (err) {
          res.redirect("back");
@@ -100,7 +100,7 @@ function isLoggedIn(req, res, next) {
 }
 
 // Middleware for authorization
-function checkCampgraoundOwnership(req, res, next) {
+function checkCommentOwnership(req, res, next) {
    // Is the user logged in? If yes...
    if (req.isAuthenticated()) {
       Comment.findById(req.params.comment_id, function (err, foundComment) {
