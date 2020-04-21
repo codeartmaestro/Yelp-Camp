@@ -47,12 +47,81 @@ router.post("/", isLoggedIn, function (req, res) {
    });
 });
 
-// Middleware to check if the user is logged in
+// EDIT COMMENT
+// /campgrounds/:id/comments/:comment_id/edit --- nested routing.
+// If we have both :id above, params takes the first one only
+router.get("/:comment_id/edit", checkCampgraoundOwnership, function (req, res) {
+   Comment.findById(req.params.comment_id, function (err, foundComment) {
+      if (err) {
+         res.redirect("back");
+      } else {
+         Campground.findById(req.params.id, function (err, foundCampground) {
+            res.render("comments/edit", { campground: foundCampground, comment: foundComment });
+         });
+      }
+   });
+});
+/*
+**************** COLT'S SOUTION for EDIT ****************
+in edit.js > instead of campground._id > campground_id > and remove campground.name
+here in else part > instead of all Campground.findById... >
+res.render("comments/edit", { campground_id: req.params.id, comment: foundComment });
+I didn't do this because this way we cannot use any other parameter of campground such as name in our edit file.
+*/
+
+// UPDATE COMMENT
+router.put("/:comment_id", checkCampgraoundOwnership, function (req, res) {
+   Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function (err, updatedComment) {
+      if (err) {
+         res.redirect("back");
+      } else {
+         res.redirect("/campgrounds/" + req.params.id);
+      }
+   });
+});
+
+// DELETE COMMENT
+router.delete("/:comment_id", checkCampgraoundOwnership, function (req, res) {
+   Comment.findByIdAndRemove(req.params.comment_id, function (err) {
+      if (err) {
+         res.redirect("back");
+      } else {
+         res.redirect("/campgrounds/" + req.params.id);
+      }
+   });
+});
+
+// Middleware to check if the user is logged in (authentication)
 function isLoggedIn(req, res, next) {
    if (req.isAuthenticated()) {
       return next();
    }
    res.redirect("/login");
+}
+
+// Middleware for authorization
+function checkCampgraoundOwnership(req, res, next) {
+   // Is the user logged in? If yes...
+   if (req.isAuthenticated()) {
+      Comment.findById(req.params.comment_id, function (err, foundComment) {
+         if (err) {
+            // "back" sends the user back to where they were before this page
+            res.redirect("back");
+         } else {
+            // Does the user own this campground?
+            // We need to check if the ID of the author matches the ID of the user
+            if (foundComment.author.id.equals(req.user._id)) {
+               next();
+            } else {
+               // if the user does not own the campground
+               res.redirect("back");
+            }
+         }
+      });
+   } else {
+      // If not logged in, redirect
+      res.redirect("back");
+   }
 }
 
 module.exports = router;
