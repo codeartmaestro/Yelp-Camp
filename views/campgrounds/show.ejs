@@ -18,21 +18,34 @@
                <h4><a href="#"><%= campground.name %></a></h4>
                <p><%= campground.description %></p>
                <p><em>Submitted by <%= campground.author.username %></em></p>
+               <!-- We've defined currentUser in app.js before -->
+               <% if(currentUser && campground.author.id.equals(currentUser._id)) { %>
+                  <a class="btn btn-xs btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+                  <form id="delete-form" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                     <button class="btn btn-xs btn-danger">Delete</button>
+                  </form>
+               <% } %>
+               <% if(currentUser && !campground.author.id.equals(currentUser._id)) { %>
+                  <a class="btn btn-xs btn-warning disabled" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+                  <form id="delete-form" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                     <button class="btn btn-xs btn-danger" disabled="disabled">Delete</button>
+                  </form>
+               <% } %>
             </div>
          </div>
          <div class="well">
             <div class="text-right">
                <a class="btn btn-success" href="/campgrounds/<%= campground._id %>/comments/new">Add New Comment</a>
             </div>
-            <hr>
+            <hr />
             <% campground.comments.forEach(function(comment){ %>
-                <div class="row">
-                    <div class="col-md-12">
-                        <strong><%= comment.author.username %></strong>
-                        <span class="pull-right">10 days ago</span>
-                        <p><%= comment.text %></p>
-                    </div>
-                </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <strong><%= comment.author.username %></strong>
+                  <span class="pull-right">10 days ago</span>
+                  <p><%= comment.text %></p>
+               </div>
+            </div>
             <% }) %>
          </div>
       </div>
