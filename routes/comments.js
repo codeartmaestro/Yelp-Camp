@@ -32,6 +32,7 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
          // create a new comment
          Comment.create(req.body.comment, function (err, comment) {
             if (err) {
+               req.flash("error", "Something went wrong!");
                console.log(err);
             } else {
                // add username and ID to comment
@@ -42,6 +43,7 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
                // associate or connect the new comment to campground
                campground.comments.push(comment);
                campground.save();
+               req.flash("success", "Successfully added comment!");
                // redirect to campground show page
                res.redirect("/campgrounds/" + campground._id);
             }
@@ -54,16 +56,23 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
 // /campgrounds/:id/comments/:comment_id/edit --- nested routing.
 // If we have both :id above, params takes the first one only
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, function (req, res) {
-   Comment.findById(req.params.comment_id, function (err, foundComment) {
-      if (err) {
-         res.redirect("back");
-      } else {
-         Campground.findById(req.params.id, function (err, foundCampground) {
-            res.render("comments/edit", { campground: foundCampground, comment: foundComment });
-         });
+   Campground.findById(req.params.id, function (err, foundCampground) {
+      if (err || !foundCampground) {
+         req.flash("error", "Campground Not Found!");
+         return res.redirect("back");
       }
+      Comment.findById(req.params.comment_id, function (err, foundComment) {
+         if (err) {
+            eq.flash("error", "Comment Not Found!");
+            res.redirect("back");
+         } else {
+            res.render("comments/edit", { campground: foundCampground, comment: foundComment });
+         }
+      });
    });
 });
+
+
 /*
 **************** COLT'S SOUTION for EDIT ****************
 in edit.js > instead of campground._id > campground_id > and remove campground.name
@@ -89,6 +98,7 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, function (req, r
       if (err) {
          res.redirect("back");
       } else {
+         req.flash("success", "Comment Deleted!");
          res.redirect("/campgrounds/" + req.params.id);
       }
    });

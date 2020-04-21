@@ -54,8 +54,9 @@ router.get("/:id", function (req, res) {
    Campground.findById(req.params.id)
       .populate("comments")
       .exec(function (err, foundCampground) {
-         if (err) {
-            console.log(err);
+         if (err || !foundCampground) {
+            req.flash("error", "Campground Not Found!");
+            res.redirect("/campgrounds");
          } else {
             // render show template with that campground
             res.render("campgrounds/show", { campground: foundCampground });
@@ -66,6 +67,10 @@ router.get("/:id", function (req, res) {
 // EDIT CAMPGROUND ROUTE
 router.get("/:id/edit", middleware.checkCampgraoundOwnership, function (req, res) {
    Campground.findById(req.params.id, function (err, foundCampground) {
+      if (err) {
+         req.flash("error", "Campground Not Found!");
+         res.redirect("/campgrounds/" + req.params.id);
+      }
       res.render("campgrounds/edit", { campground: foundCampground });
    });
 });
@@ -93,6 +98,7 @@ router.delete("/:id", middleware.checkCampgraoundOwnership, function (req, res) 
             if (err) {
                console.log(err);
             }
+            req.flash("success", "Campground Deleted!");
             res.redirect("/campgrounds");
          });
       }

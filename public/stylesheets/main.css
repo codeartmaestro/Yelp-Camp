@@ -10,6 +10,11 @@
     padding: 9px;
 }
 
-.delete-form{
+.delete-form {
     display: inline;
+}
+
+#to-front {
+    z-index: 1;
+    position: relative;
 }
