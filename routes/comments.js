@@ -3,10 +3,13 @@ var express = require("express");
 var router = express.Router({ mergeParams: true });
 var Campground = require("../models/campground");
 var Comment = require("../models/comment");
+var middleware = require("../middleware");
+/* we could've said var middleware = require ("../middleware/index.js").
+But when we require the directory, the index.js file is automatically required. no need to mention it, but it's ok to do so. */
 // ===========================================================
 
 // Comments New
-router.get("/new", isLoggedIn, function (req, res) {
+router.get("/new", middleware.isLoggedIn, function (req, res) {
    // get the id of the campground
    Campground.findById(req.params.id, function (err, campground) {
       if (err) {
@@ -19,7 +22,7 @@ router.get("/new", isLoggedIn, function (req, res) {
 });
 
 // Comments Creat
-router.post("/", isLoggedIn, function (req, res) {
+router.post("/", middleware.isLoggedIn, function (req, res) {
    // look up campground using ID
    Campground.findById(req.params.id, function (err, campground) {
       if (err) {
@@ -50,7 +53,7 @@ router.post("/", isLoggedIn, function (req, res) {
 // EDIT COMMENT
 // /campgrounds/:id/comments/:comment_id/edit --- nested routing.
 // If we have both :id above, params takes the first one only
-router.get("/:comment_id/edit", checkCommentOwnership, function (req, res) {
+router.get("/:comment_id/edit", middleware.checkCommentOwnership, function (req, res) {
    Comment.findById(req.params.comment_id, function (err, foundComment) {
       if (err) {
          res.redirect("back");
@@ -70,7 +73,7 @@ I didn't do this because this way we cannot use any other parameter of campgroun
 */
 
 // UPDATE COMMENT
-router.put("/:comment_id", checkCommentOwnership, function (req, res) {
+router.put("/:comment_id", middleware.checkCommentOwnership, function (req, res) {
    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function (err, updatedComment) {
       if (err) {
          res.redirect("back");
@@ -81,7 +84,7 @@ router.put("/:comment_id", checkCommentOwnership, function (req, res) {
 });
 
 // DELETE COMMENT
-router.delete("/:comment_id", checkCommentOwnership, function (req, res) {
+router.delete("/:comment_id", middleware.checkCommentOwnership, function (req, res) {
    Comment.findByIdAndRemove(req.params.comment_id, function (err) {
       if (err) {
          res.redirect("back");
@@ -90,38 +93,5 @@ router.delete("/:comment_id", checkCommentOwnership, function (req, res) {
       }
    });
 });
-
-// Middleware to check if the user is logged in (authentication)
-function isLoggedIn(req, res, next) {
-   if (req.isAuthenticated()) {
-      return next();
-   }
-   res.redirect("/login");
-}
-
-// Middleware for authorization
-function checkCommentOwnership(req, res, next) {
-   // Is the user logged in? If yes...
-   if (req.isAuthenticated()) {
-      Comment.findById(req.params.comment_id, function (err, foundComment) {
-         if (err) {
-            // "back" sends the user back to where they were before this page
-            res.redirect("back");
-         } else {
-            // Does the user own this campground?
-            // We need to check if the ID of the author matches the ID of the user
-            if (foundComment.author.id.equals(req.user._id)) {
-               next();
-            } else {
-               // if the user does not own the campground
-               res.redirect("back");
-            }
-         }
-      });
-   } else {
-      // If not logged in, redirect
-      res.redirect("back");
-   }
-}
 
 module.exports = router;
