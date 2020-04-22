@@ -27,7 +27,7 @@ middlewareObj.checkCampgraoundOwnership = function (req, res, next) {
         });
     } else {
         // If not logged in, redirect
-        res.flash("error", "You need to be logged in to do that!");
+        req.flash("error", "You need to be logged in to do that!");
         res.redirect("back");
     }
 };
@@ -54,7 +54,7 @@ middlewareObj.checkCommentOwnership = function (req, res, next) {
         });
     } else {
         // If not logged in, redirect
-        res.flash("error", "You need to be logged in to do that!");
+        req.flash("error", "You need to be logged in to do that!");
         res.redirect("back");
     }
 };
