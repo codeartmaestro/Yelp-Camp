@@ -18,11 +18,8 @@ var commentRoutes = require("./routes/comments"),
 
 mongoose.set("useFindAndModify", false);
 mongoose.set("useUnifiedTopology", true);
-// console.log(process.env.DATABASEURL);
-// mongoose.connect("mongodb://localhost:27017/yelp_camp", { useNewUrlParser: true });
 var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
 mongoose.connect(url, { useNewUrlParser: true });
-// mongoose.connect("mongodb+srv://leilaAdmin:LeIlA53452AdMiN234246@yelp-camp-tlk1z.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
