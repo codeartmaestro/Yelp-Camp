@@ -4,12 +4,12 @@
   "description": "Yelp Camp project from Colt's the Web Developmnt Bootcamp course",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leila-io/Yelp-Camp.git",
-    "start": "node app.js"
+    "url": "git+https://github.com/leila-io/Yelp-Camp.git"
   },
   "keywords": [
     "yelp-camp",
